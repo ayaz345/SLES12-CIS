@@ -7,19 +7,18 @@ def gen_pass(size=16, chars=string.ascii_letters + string.digits):
 
 def gen_salt(salt):
     '''Generate a random salt.'''
+    if salt:
+        return f'$6${salt}'
     ret = ''
-    if not salt:
-        with open('/dev/urandom', 'rb') as urandom:
-            while True:
-                byte = urandom.read(1)
-                if byte in ('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
-                            './0123456789'):
-                    ret += byte
-                    if len(ret) == 16:
-                        break
-        return '$6$%s' % ret
-    else:
-        return '$6$%s' % salt
+    with open('/dev/urandom', 'rb') as urandom:
+        while True:
+            byte = urandom.read(1)
+            if byte in ('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+                        './0123456789'):
+                ret += byte
+                if len(ret) == 16:
+                    break
+    return f'$6${ret}'
 
 def main():
     module = AnsibleModule(
